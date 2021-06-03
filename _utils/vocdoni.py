@@ -2,6 +2,7 @@ from .voc_const import *
 import json
 import requests
 from tqdm import tqdm
+import time
 
 class VocdoniApi:
     def __init__(self, url):
@@ -38,6 +39,7 @@ class VocdoniApi:
 
         for f in tqdm(range_from_env):
             r = self._getEnvelopeList(processId=processId, _from=f)
+            time.sleep(.1)
             output.append(r)
             if len(r) != 64:
                 # Got all envelopes from process
