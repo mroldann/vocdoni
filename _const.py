@@ -1,11 +1,7 @@
 from pathlib import Path
 
-
 URL = 'https://gw1.dev.vocdoni.net/dvote'
+# Source: https://explorer.dev.vocdoni.net/
 MAX_PROCESSES = 200
-
-class PATHS:
-    DATA = Path('data')
-
-
-PATHS.DATA.mkdir(exist_ok=True)
+MAX_ENVELOPES = 1600000
+AVG_BLOCK_TIME_SECS = 10

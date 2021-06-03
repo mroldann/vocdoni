@@ -1,7 +1,7 @@
 from .voc_const import *
 import json
 import requests
-
+from tqdm import tqdm
 
 class VocdoniApi:
     def __init__(self, url):
@@ -31,7 +31,20 @@ class VocdoniApi:
 
         return r
 
-    def getEnvelopeList(self, processId, _from):
+    
+    def getEnvelopeList(self, processId, max_env):
+        output = []
+        range_from_env = range(0, max_env, 64)
+
+        for f in tqdm(range_from_env):
+            r = self._getEnvelopeList(processId=processId, _from=f)
+            output.append(r)
+            if len(r) != 64:
+                # Got all envelopes from process
+                break
+        return output
+
+    def _getEnvelopeList(self, processId, _from):
         _r = self._api_call(
             _method=METHODS.getEnvelopeList,
             processId=processId,
@@ -39,13 +52,18 @@ class VocdoniApi:
         )
         
         r = _r.get("response", _r).get("envelopes", _r)
-        if isinstance(r, dict):
+        output = []
+        if isinstance(r, list):
             # Keep only needed attributes
-            # If r is an error it won't be a dict
-            r = { attr: r[attr] for attr in ATTR.getEnvelopeList 
-            if attr in r}
+            # If r is an error it won't be a list
+            for env in r:    
+                output.append({attr: env[attr] for attr in ATTR.getEnvelopeList 
+                if attr in env})
 
-        return _r
+        if output: 
+            return output
+        else:
+            return r
     
     def _api_call(self, _method, _id=None, _from=None, processId=None):
         _id = "123" if not _id else _id

@@ -17,6 +17,12 @@ range_from = range(
     64
 )
 
+range_from_env = range(
+    0, 
+    MAX_ENVELOPES,
+    64
+)
+
 processes = []
 errs = []
 print("Getting processes list:")
@@ -28,14 +34,12 @@ for f in tqdm(range_from):
     else:
         errs.extend((f, r))
 
-# print(len(processes))
-# print(len(errs))
+
 
 processes_dict_list = []
 print("Getting data from processes")
 for p in tqdm(processes[:20]):
     r = voc_api.getProcessInfo(processId=p)
-    # print(json.dumps(r))
     processes_dict_list.append(r)
 
 print("Inserting into processes collection")
@@ -44,8 +48,6 @@ col_processes.insert_many(processes_dict_list)
 
 myresult = col_processes.find()
 myresult = [x for x in myresult]
-print("myresult")
-print(myresult)
 df_processes = pd.DataFrame(myresult)
 # df_processes['blocks'] = df_processes['endBlock'] - df_processes['startBlock']
 # print(df_processes['blocks'].describe())
@@ -53,11 +55,12 @@ print(df_processes.head())
 print(df_processes.columns)
 
 envelopes_dict_list = []
-print("Getting data from envelopes")
-for p in tqdm(processes[:3]):
-    r = voc_api.getEnvelopeList(processId=p, _from=0)
-    print(json.dumps(r))
-    envelopes_dict_list.append(r)
+print("Getting data from envelopes") # 25.79s/it
+for p in tqdm(processes[:20]):
+        r = voc_api.getEnvelopeList(processId=p, max_env=MAX_ENVELOPES)
+        envelopes_dict_list.append(r)
+        # TODO: thread pool!
+    
 
-# print(envelopes_dict_list)
+print(envelopes_dict_list)
 print(len(envelopes_dict_list))
