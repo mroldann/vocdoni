@@ -11,3 +11,4 @@ class ATTR:
         getEnvelope = ['weight']
 
 SLEEP_SECS = .1
+LIST_SIZE = 1

@@ -3,6 +3,7 @@ import json
 import requests
 from tqdm import tqdm
 import time
+from random import randint
 
 class VocdoniApi:
     def __init__(self, url):
@@ -39,13 +40,14 @@ class VocdoniApi:
     def getEnvelopeList(self, processId, max_env):
         output = []
         range_from_env = range(0, max_env, 64)
-        for f in tqdm(range_from_env):
-            r = self._getEnvelopeList(processId=processId, _from=f)
-            output.append(r)
-            if not isinstance(r, list) or  len(r) != 64:
-                # Got all envelopes from process or received error
-                break
-        return output
+        # for f in tqdm(range_from_env):
+        #     r = self._getEnvelopeList(processId=processId, _from=f)
+        #     output.append(r)
+        #     if not isinstance(r, list) or  len(r) != 64:
+        #         # Got all envelopes from process or received error
+        #         break
+        r = self._getEnvelopeList(processId=processId, _from=0)
+        return r
     
     def getEnvelope(self, nullifier):
         _r = self._api_call(
@@ -63,7 +65,8 @@ class VocdoniApi:
         _r = self._api_call(
             _method=METHODS.getEnvelopeList,
             processId=processId,
-            _from=_from
+            _from=_from,
+            listSize=LIST_SIZE
         )
         
         if isinstance(_r, dict):
@@ -84,8 +87,9 @@ class VocdoniApi:
     def _api_call(self, _method, _id=None, 
     _from=None, 
     processId=None,
-    nullifier=None):
-        time.sleep(SLEEP_SECS)
+    nullifier=None,
+    listSize=None):
+        time.sleep(SLEEP_SECS+randint(10,100)/1000)
         _id = "123" if not _id else _id
         data = {
             "request": {
@@ -97,6 +101,7 @@ class VocdoniApi:
         if _from != None: data["request"]["from"] = _from
         if processId != None: data["request"]["processId"] = processId
         if nullifier != None: data["request"]["nullifier"] = nullifier
+        if listSize != None: data["request"]["l istSize"] = listSize
         try:
             r = requests.post(
                 self.url, 

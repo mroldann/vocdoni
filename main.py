@@ -55,13 +55,16 @@ if __name__ ==  '__main__':
         print(df_processes[col].value_counts().head(10))
 
     print("\nGetting data from envelopes") # 25.79s/it before Pool
-    with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
-        future_results = {executor.submit(voc_api.getEnvelopeList,
-        p, MAX_ENVELOPES): p for p in processes[:N]}
-        
-    envelopes_dict_list = [y for x in future_results 
-    for y in x.result()
-    ] # nested list
+    # with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
+    #     future_results = {executor.submit(voc_api.getEnvelopeList,
+    #     p, MAX_ENVELOPES): p for p in processes[:N]}        
+    # envelopes_dict_list = [y for x in future_results 
+    # for y in x.result()
+    # ] # nested list
+
+    envelopes_dict_list = []
+    for p in tqdm(processes):
+        envelopes_dict_list.append(voc_api.getEnvelopeList(p, MAX_ENVELOPES))
 
     with open('envelopes.txt', 'w') as f:
         for item in envelopes_dict_list:
@@ -78,17 +81,20 @@ if __name__ ==  '__main__':
                 nullifiers.append(env.get('nullifier', None))
 
     print("\nnullifiers")
-    print(nullifiers)
+    print(nullifiers[:10])
     print(len(nullifiers))
 
-    with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
-        future_results = {executor.submit(voc_api.getEnvelope,
-        n): n for n in nullifiers}
+    # with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
+    #     future_results = {executor.submit(voc_api.getEnvelope,
+    #     n): n for n in nullifiers}
+    # nullifiers_result = [x.result() for x in future_results]
 
-    nullifiers_result = [x.result() for x in future_results]
+    nullifiers_result = []
+    for n in tqdm(nullifiers):
+        nullifiers_result.append(voc_api.getEnvelope, n)
 
     print("\nnullifiers_result")
-    print(nullifiers_result)
+    print(nullifiers_result[:10])
     print(len(nullifiers_result))
     
 
