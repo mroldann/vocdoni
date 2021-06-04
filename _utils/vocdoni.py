@@ -55,7 +55,7 @@ class VocdoniApi:
             nullifier=nullifier
         )
 
-        r = _r.get("response", _r).get("weight", _r)
+        r = _r.get("response", _r).get("envelope", _r).get("weight", _r)
         if isinstance(r, dict): r.update({"nullifier":nullifier})
 
         return r

@@ -50,10 +50,6 @@ if __name__ ==  '__main__':
         p, MAX_ENVELOPES): p for p in processes[:1]}
         
     
-    envelopes_dict_list = [x.result() for x in future_results] # nested list
-    print(envelopes_dict_list)
-    print(len(envelopes_dict_list))
-    
     envelopes_dict_list = [z for x in future_results 
     for y in x.result()
     for z in y
@@ -61,12 +57,16 @@ if __name__ ==  '__main__':
     print(envelopes_dict_list)
     print(len(envelopes_dict_list))
     
-
     nullifiers = [x.get('nullifier') for x in envelopes_dict_list
     if 'nullifier' in x]
 
     print(nullifiers)
 
-    # with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
-    #     future_results = {executor.submit(voc_api.getEnvelopeList,
-    #     p, MAX_ENVELOPES): p for p in processes[:3]}
+    with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
+        future_results = {executor.submit(voc_api.getEnvelope,
+        n): n for n in nullifiers[:20]}
+
+    nullifiers_result = [x.result() for x in future_results]
+
+    print(nullifiers_result)
+    
