@@ -39,7 +39,6 @@ class VocdoniApi:
     def getEnvelopeList(self, processId, max_env):
         output = []
         range_from_env = range(0, max_env, 64)
-
         for f in tqdm(range_from_env):
             r = self._getEnvelopeList(processId=processId, _from=f)
             time.sleep(SLEEP_SECS)
@@ -79,7 +78,6 @@ class VocdoniApi:
                     if attr in env})
 
             if output: 
-                print('output len', len(output))
                 return output
         else:
             return _r
