@@ -32,6 +32,9 @@ class VocdoniApi:
 
         return r
 
+
+    
+
     
     def getEnvelopeList(self, processId, max_env):
         output = []
@@ -45,7 +48,18 @@ class VocdoniApi:
                 # Got all envelopes from process
                 break
         return output
+    
+    def getEnvelope(self, nullifier):
+        _r = self._api_call(
+            _method=METHODS.getEnvelope,
+            nullifier=nullifier
+        )
 
+        r = _r.get("response", _r).get("weight", _r)
+        if isinstance(r, dict): r.update({"nullifier":nullifier})
+
+        return r
+    
     def _getEnvelopeList(self, processId, _from):
         _r = self._api_call(
             _method=METHODS.getEnvelopeList,
@@ -67,7 +81,10 @@ class VocdoniApi:
         else:
             return r
     
-    def _api_call(self, _method, _id=None, _from=None, processId=None):
+    def _api_call(self, _method, _id=None, 
+    _from=None, 
+    processId=None,
+    nullifier=None):
         _id = "123" if not _id else _id
         data = {
             "request": {
@@ -78,6 +95,7 @@ class VocdoniApi:
 
         if _from != None: data["request"]["from"] = _from
         if processId != None: data["request"]["processId"] = processId
+        if nullifier != None: data["request"]["nullifier"] = nullifier
         try:
             r = requests.post(
                 self.url, 

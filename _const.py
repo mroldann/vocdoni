@@ -5,3 +5,6 @@ URL = 'https://gw1.dev.vocdoni.net/dvote'
 MAX_PROCESSES = 200
 MAX_ENVELOPES = 1600000
 AVG_BLOCK_TIME_SECS = 10
+
+
+MAX_POOL_WORKERS = 10

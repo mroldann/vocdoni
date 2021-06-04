@@ -8,3 +8,4 @@ class METHODS:
 class ATTR:
         getProcessInfo = ["creationTime", "endBlock", "startBlock", "entityId", "processId"]
         getEnvelopeList = ['height', 'nullifier', 'process_id']
+        getEnvelope = ['weight']
