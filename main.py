@@ -50,6 +50,9 @@ if __name__ ==  '__main__':
     df_processes = pd.DataFrame(myresult)
     print(df_processes.head())
     print(df_processes.columns)
+    for col in df_processes.columns:
+        print(col)
+        print(df_processes[col].value_counts().head(10))
 
     print("\nGetting data from envelopes") # 25.79s/it before Pool
     with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
@@ -59,7 +62,7 @@ if __name__ ==  '__main__':
     envelopes_dict_list = [y for x in future_results 
     for y in x.result()
     ] # nested list
-            
+
     with open('envelopes.txt', 'w') as f:
         for item in envelopes_dict_list:
             f.write("%s\n" % item)
@@ -89,3 +92,4 @@ if __name__ ==  '__main__':
     print(len(nullifiers_result))
     
 
+    

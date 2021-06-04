@@ -10,4 +10,4 @@ class ATTR:
         getEnvelopeList = ['height', 'nullifier', 'process_id']
         getEnvelope = ['weight']
 
-SLEEP_SECS = .2
+SLEEP_SECS = .1

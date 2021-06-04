@@ -41,7 +41,6 @@ class VocdoniApi:
         range_from_env = range(0, max_env, 64)
         for f in tqdm(range_from_env):
             r = self._getEnvelopeList(processId=processId, _from=f)
-            time.sleep(SLEEP_SECS)
             output.append(r)
             if not isinstance(r, list) or  len(r) != 64:
                 # Got all envelopes from process or received error
@@ -86,6 +85,7 @@ class VocdoniApi:
     _from=None, 
     processId=None,
     nullifier=None):
+        time.sleep(SLEEP_SECS)
         _id = "123" if not _id else _id
         data = {
             "request": {
