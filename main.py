@@ -15,6 +15,9 @@ if __name__ ==  '__main__':
         64
     )
 
+    print('MAX_POOL_WORKERS', MAX_POOL_WORKERS)
+    print('N', N)
+
     processes = []
     errs = []
     print("Getting processes list:")
@@ -25,12 +28,10 @@ if __name__ ==  '__main__':
             processes.extend(r)
         else:
             errs.extend((f, r))
-
-
-
+    
     processes_dict_list = []
     print("Getting data from processes")
-    for p in tqdm(processes[:20]):
+    for p in tqdm(processes):
         r = voc_api.getProcessInfo(processId=p)
         processes_dict_list.append(r)
 
@@ -47,26 +48,31 @@ if __name__ ==  '__main__':
     print("Getting data from envelopes") # 25.79s/it before Pool
     with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
         future_results = {executor.submit(voc_api.getEnvelopeList,
-        p, MAX_ENVELOPES): p for p in processes[:1]}
+        p, MAX_ENVELOPES): p for p in processes[:N]}
         
-    
-    envelopes_dict_list = [z for x in future_results 
+    envelopes_dict_list = [y for x in future_results 
     for y in x.result()
-    for z in y
     ] # nested list
+
     print(envelopes_dict_list)
     print(len(envelopes_dict_list))
     
-    nullifiers = [x.get('nullifier') for x in envelopes_dict_list
-    if 'nullifier' in x]
+    nullifiers = []
+    for env_list in envelopes_dict_list:
+        if isinstance(env_list, list):
+            for env in env_list:
+                nullifiers.append(env.get('nullifier', None))
 
     print(nullifiers)
+    print(len(nullifiers))
 
     with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
         future_results = {executor.submit(voc_api.getEnvelope,
-        n): n for n in nullifiers[:20]}
+        n): n for n in nullifiers}
 
     nullifiers_result = [x.result() for x in future_results]
 
     print(nullifiers_result)
+    print(len(nullifiers_result))
     
+

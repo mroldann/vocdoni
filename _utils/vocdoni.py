@@ -42,10 +42,10 @@ class VocdoniApi:
 
         for f in tqdm(range_from_env):
             r = self._getEnvelopeList(processId=processId, _from=f)
-            time.sleep(.1)
+            time.sleep(SLEEP_SECS)
             output.append(r)
-            if len(r) != 64:
-                # Got all envelopes from process
+            if not isinstance(r, list) or  len(r) != 64:
+                # Got all envelopes from process or received error
                 break
         return output
     
@@ -55,10 +55,11 @@ class VocdoniApi:
             nullifier=nullifier
         )
 
-        r = _r.get("response", _r).get("envelope", _r).get("weight", _r)
-        if isinstance(r, dict): r.update({"nullifier":nullifier})
-
-        return r
+        if isinstance(_r, dict):
+            r = _r.get("response", _r).get("envelope", _r).get("weight", _r)
+            return {"nullifier" : nullifier, "weight" : r}
+        else:
+            return _r
     
     def _getEnvelopeList(self, processId, _from):
         _r = self._api_call(
@@ -67,19 +68,21 @@ class VocdoniApi:
             _from=_from
         )
         
-        r = _r.get("response", _r).get("envelopes", _r)
-        output = []
-        if isinstance(r, list):
-            # Keep only needed attributes
-            # If r is an error it won't be a list
-            for env in r:    
-                output.append({attr: env[attr] for attr in ATTR.getEnvelopeList 
-                if attr in env})
+        if isinstance(_r, dict):
+            r = _r.get("response", _r).get("envelopes", _r)
+            output = []
+            if isinstance(r, list):
+                # Keep only needed attributes
+                # If r is an error it won't be a list
+                for env in r:    
+                    output.append({attr: env[attr] for attr in ATTR.getEnvelopeList 
+                    if attr in env})
 
-        if output: 
-            return output
+            if output: 
+                print('output len', len(output))
+                return output
         else:
-            return r
+            return _r
     
     def _api_call(self, _method, _id=None, 
     _from=None, 
