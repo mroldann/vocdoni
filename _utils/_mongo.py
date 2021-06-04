@@ -7,5 +7,6 @@ col_processes = vocdoni_db["processes"]
 col_envelopes = vocdoni_db["envelopes"]
 
 # Drop if exists
-col_processes.drop()
-col_envelopes.drop()
+def drop_collections():
+    col_processes.drop()
+    col_envelopes.drop()
