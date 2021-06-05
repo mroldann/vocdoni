@@ -13,3 +13,4 @@ DATA_PATH = Path("data")
 DATA_PATH.mkdir(exist_ok=True)
 
 CACHE_ENVELOPES = True
+CACHE_NULLIFIERS = True

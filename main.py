@@ -70,20 +70,23 @@ if __name__ ==  '__main__':
     print("envelopes_filtered: ", len(envelopes_filtered))
     print(envelopes_filtered[:3])
 
-    for env_list in envelopes_filtered:
-        if isinstance(env_list, list):
-            for env in env_list:
-                nullifiers.append(env.get('nullifier', None))
+    for env in envelopes_filtered:
+        nullifiers.append(env.get('nullifier', None))
 
     print("\nnullifiers")
     print(nullifiers[:10])
     print(len(nullifiers))
+    with open('nullifiers.txt', 'w') as f:
+        for item in nullifiers:
+            f.write("%s\n" % item)
 
     nullifiers_result = []
-    for e in tqdm(envelopes_filtered):
-        nullif = e.get("nullifier", None)
-        if nullif:
-            nullifiers_result.append(voc_api.getEnvelope(nullif))
+    
+    with open('nullifiers_result.txt', 'w') as f:        
+        for n in tqdm(nullifiers):
+            r = voc_api.getEnvelope(n)
+            nullifiers_result.append(r)
+            f.write("%s\n" % r)
 
     print("\nnullifiers_result")
     print(nullifiers_result[:10])
