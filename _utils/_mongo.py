@@ -16,3 +16,8 @@ def get_df_processes():
     processes = col_processes.find()
     processes = [x for x in processes]
     return pd.DataFrame(processes)
+
+def get_df_envelopes():
+    envelopes = col_envelopes.find()
+    envelopes = [x for x in envelopes]
+    return pd.DataFrame(envelopes)

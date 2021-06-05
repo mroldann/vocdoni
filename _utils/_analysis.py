@@ -5,42 +5,6 @@ from plotly.figure_factory import create_scatterplotmatrix
 pio.renderers.default = 'iframe_connected'
 import pandas as pd
 from datetime import timedelta
-
-def add_time_cols(df_processes, AVG_BLOCK_TIME_SECS):
-    creationTime_ts = "creationTime_ts"
-    blocks = "blocks"
-    proccess_duration_d = "proccess_duration_d"
-
-    df_processes[blocks] = (df_processes["endBlock"] 
-    - df_processes["startBlock"])
-
-    
-    df_processes[proccess_duration_d] = (df_processes[blocks] 
-                                       / AVG_BLOCK_TIME_SECS # seconds
-                                       / 60 # minutes
-                                       / 24 # days
-                                      )
-
-    df_processes[creationTime_ts] = pd.to_datetime(df_processes["creationTime"])
-
-    MIN_KNOWN_DATE = df_processes[creationTime_ts].min()
-    
-    df_processes["endingTime_ts"] = (df_processes[creationTime_ts] 
-    + df_processes[proccess_duration_d].apply(lambda x: timedelta(days=x)))
-
-    df_processes = df_processes.drop("_id", axis=1)
-    return df_processes, MIN_KNOWN_DATE
-
-
-
-
-def scatter_duration_votes(df_processes):
-    fig = create_scatterplotmatrix(df_processes.loc[:, ["proccess_duration_d", "votes_count"]],
-                                diag='histogram', 
-                                height=700, width=900,
-                                )
-    return fig.show()
-
 class globalIndicadors:
     creationTime_ts = "creationTime_ts"
     blocks = "blocks"
@@ -54,6 +18,18 @@ class globalIndicadors:
         self.get_global_indicators()
 
     def _preprocess(self):
+        self._add_time_cols()
+        self.MIN_KNOWN_DATE = self.df_processes["creationTime_ts"].min()
+        # Needed for grouper, then dropped.
+        self.df_processes['not_dup'] = 1 - self.df_processes["entityId"].duplicated()
+
+        ### Estimate timestamp for every envelope
+        self.df_envelopes["vote_ts"] = (self.df_envelopes["height"]  
+                                / self.AVG_BLOCK_TIME_SECS # seconds
+                                / 60 # minutes
+                                / 24 # days
+                                ).apply(lambda x: timedelta(days=x)) + self.MIN_KNOWN_DATE
+
         self.df_processes[self.blocks] = (self.df_processes["endBlock"] - self.df_processes["startBlock"])
         self.df_processes[self.proccess_duration_d] = (self.df_processes[self.blocks] 
                                                     / self.AVG_BLOCK_TIME_SECS # seconds
@@ -63,8 +39,71 @@ class globalIndicadors:
 
         self.df_processes[self.creationTime_ts] = pd.to_datetime(self.df_processes["creationTime"])
         self.MIN_KNOWN_DATE = self.df_processes[self.creationTime_ts].min()
+        self._add_votes_to_processes()
 
+        # Set Groupers
+        self.proc_day_grouper = self.df_processes.groupby(pd.Grouper(key='creationTime_ts',freq='D'))
+        self.votes_day_grouper = self.df_envelopes.groupby(pd.Grouper(key='vote_ts',freq='D'))
+        self.votes_day_hour_grouper = self.df_envelopes.groupby(pd.Grouper(key='vote_ts',freq='H'))
+        self.votes_weekday_grouper = self.df_envelopes.groupby(self.df_envelopes['vote_ts'].dt.weekday)
+        self.votes_hour_grouper = self.df_envelopes.groupby(self.df_envelopes['vote_ts'].dt.hour)
 
+        self.votes_per_day = self.votes_day_grouper["nullifier"].count()
+        self.votes_per_day_hour = self.votes_day_hour_grouper["nullifier"].count()
+        self.votes_weekday = self.votes_weekday_grouper["nullifier"].count()
+        self.votes_hour = self.votes_hour_grouper["nullifier"].count()
+
+    
+    def _add_votes_to_processes(self):
+        df_tmp = (self.df_envelopes.groupby("process_id")["nullifier"]
+                        .count()
+                        .sort_values(ascending=False)
+                        .to_frame()
+                        )
+
+        votes_dict = {process_id : vote_count[0] for process_id, vote_count in df_tmp.iterrows()}
+        self.df_processes["votes_count"] = (self.df_processes["processId"]
+                                                .apply(lambda x: votes_dict.get(x, 0)).astype("float"))
+
+    def _add_time_cols(self):
+        self.df_processes[self.blocks] = (self.df_processes["endBlock"] - self.df_processes["startBlock"])
+
+        
+        self.df_processes[self.proccess_duration_d] = (self.df_processes[self.blocks] 
+                                        / self.AVG_BLOCK_TIME_SECS # seconds
+                                        / 60 # minutes
+                                        / 24 # days
+                                        )
+
+        self.df_processes[self.creationTime_ts] = pd.to_datetime(self.df_processes["creationTime"])
+        self.df_processes["endingTime_ts"] = (self.df_processes[self.creationTime_ts] + self.df_processes[self.proccess_duration_d].apply(lambda x: timedelta(days=x)))    
+    
+    def plot_votes_per_day(self):
+            fig = px.scatter(self.votes_per_day)
+            fig.update_layout(title_text="votes_per_day")
+            return fig
+
+    
+    def plot_votes_per_day_hour(self):
+            fig = px.scatter(self.votes_per_day_hour)
+            fig.update_layout(title_text="votes_per_day_hour")
+            return fig
+    
+        
+    def plot_votes_weekday(self):
+            fig = px.scatter(self.votes_weekday)
+            fig.update_layout(title_text="votes_weekday")
+            return fig
+
+    def plot_votes_hour(self):
+            fig = px.scatter(self.votes_hour)
+            fig.update_layout(title_text="votes_hour")
+            return fig
+
+    
+
+    
+    
     def scatter_duration_votes(self):
         tmp_df = self.df_processes.loc[:, ["proccess_duration_d", "votes_count"]]
         return self._scatter_duration_votes(tmp_df, title="Process duration vs votes count")
@@ -81,17 +120,16 @@ class globalIndicadors:
     def get_global_indicators(self):
         # Processes
         self.total_processes = len(self.df_processes["processId"].unique())
-        self.processes_evol = self.df_processes.groupby('creationTime_ts')['processId'].count().cumsum(axis=0)
+        self.processes_evol = self.proc_day_grouper['processId'].count().cumsum(axis=0)
 
         # Entities
-        self.df_processes['not_dup'] = 1 - self.df_processes["entityId"].duplicated()
-        self.entities_evol = self.df_processes.groupby('creationTime_ts')['not_dup'].sum().cumsum()
+        self.entities_evol = self.proc_day_grouper['not_dup'].sum().cumsum()
         self.df_processes.drop('not_dup', inplace=True, axis=1)
         self.total_entities = len(self.df_processes["entityId"].unique())
         
         # Votes
         self.total_votes = self.df_processes["votes_count"].sum()
-        self.votes_evol = self.df_envelopes.groupby('vote_ts')['nullifier'].count().cumsum(axis=0)
+        self.votes_evol = self.votes_day_grouper['nullifier'].count().cumsum(axis=0)
 
     def plot_processes(self):
         name = "Cumulative Processes count"

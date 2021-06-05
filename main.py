@@ -69,6 +69,10 @@ if __name__ ==  '__main__':
 
     print("envelopes_filtered: ", len(envelopes_filtered))
     print(envelopes_filtered[:3])
+    
+    print("\nInserting into envelopes collection")
+    col_envelopes.insert_many(envelopes_filtered)
+
 
     for env in envelopes_filtered:
         nullifiers.append(env.get('nullifier', None))
@@ -83,7 +87,7 @@ if __name__ ==  '__main__':
     nullifiers_result = []
     
     with open('nullifiers_result.txt', 'w') as f:        
-        for n in tqdm(nullifiers):
+        for n in tqdm(nullifiers[:10]):
             r = voc_api.getEnvelope(n)
             nullifiers_result.append(r)
             f.write("%s\n" % r)
