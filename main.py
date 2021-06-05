@@ -1,38 +1,37 @@
 if __name__ ==  '__main__':
     from _const import *
     from _utils import vocdoni
+    from _utils.voc_const import *
     from _utils._mongo import (vocdoni_db,  
-    col_processes, col_envelopes)
+    col_processes, col_envelopes, drop_collections)
     from concurrent.futures import ProcessPoolExecutor
     import json
     from tqdm import tqdm
     import pandas as pd
 
+    drop_collections()
+
+    print("\n\n\n### Starting VocdoniApi processing ###")
     voc_api = vocdoni.VocdoniApi(URL)
     range_from = range(
         0, 
         MAX_PROCESSES,
         64
     )
-
-    print('MAX_POOL_WORKERS', MAX_POOL_WORKERS)
-    print('N', N)
-
     processes = []
     errs = []
     print("\nGetting processes list:")
     for f in tqdm(range_from):
-        print(f)
         r = voc_api.getProcessList(_from=f)
         if isinstance(r, list):
             processes.extend(r)
         else:
             errs.extend((f, r))
     
-    print(len(processes))
+    print("- Total processes found:", len(processes))
 
     processes_dict_list = []
-    print("\nGetting processes data")
+    print("\nGetting processes data:")
     for p in tqdm(processes):
         r = voc_api.getProcessInfo(processId=p)
         processes_dict_list.append(r)
@@ -40,42 +39,38 @@ if __name__ ==  '__main__':
     print("\nInserting into processes collection")
     col_processes.insert_many(processes_dict_list)
     
-    with open('processess.txt', 'w') as f:
-        for item in processes_dict_list:
-            f.write("%s\n" % item)
-
-
-    myresult = col_processes.find()
-    myresult = [x for x in myresult]
-    df_processes = pd.DataFrame(myresult)
-    print(df_processes.head())
-    print(df_processes.columns)
-    for col in df_processes.columns:
-        print(col)
-        print(df_processes[col].value_counts().head(10))
-
     print("\nGetting data from envelopes") # 25.79s/it before Pool
-    # with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
-    #     future_results = {executor.submit(voc_api.getEnvelopeList,
-    #     p, MAX_ENVELOPES): p for p in processes[:N]}        
-    # envelopes_dict_list = [y for x in future_results 
-    # for y in x.result()
-    # ] # nested list
-
-    envelopes_dict_list = []
-    for p in tqdm(processes):
-        envelopes_dict_list.append(voc_api.getEnvelopeList(p, MAX_ENVELOPES))
-
-    with open('envelopes.txt', 'w') as f:
-        for item in envelopes_dict_list:
-            f.write("%s\n" % item)
-
-    print("\nenvelopes_dict_list")
-    print(envelopes_dict_list)
-    print(len(envelopes_dict_list))
     
+    envelopes_dict_list = []
+    if CACHE_ENVELOPES:
+        print("\n- Cache imported.")
+        from data.rs import rs as envelopes_dict_list
+    else:
+        print("\n- API call: getEnvelopeList")
+        for p in tqdm(processes):
+            envelopes_dict_list.append(voc_api.getEnvelopeList(p, MAX_ENVELOPES))
+
+    
+    print("\nenvelopes_dict_list")
+    print("- Total envelopes: ", len(envelopes_dict_list))
+    
+    envelopes_filtered = []
+    for e in envelopes_dict_list:
+        r = e.get("response", None)
+        _e = r.get("envelopes", None)
+        if _e:
+            l = (len(_e))
+            for _d in _e:
+                new = {attr: _d[attr] for attr in ATTR.getEnvelopeList if attr in _d}
+                envelopes_filtered.append(new)
+    
+   
     nullifiers = []
-    for env_list in envelopes_dict_list:
+
+    print("envelopes_filtered: ", len(envelopes_filtered))
+    print(envelopes_filtered[:3])
+
+    for env_list in envelopes_filtered:
         if isinstance(env_list, list):
             for env in env_list:
                 nullifiers.append(env.get('nullifier', None))
@@ -84,14 +79,11 @@ if __name__ ==  '__main__':
     print(nullifiers[:10])
     print(len(nullifiers))
 
-    # with ProcessPoolExecutor(max_workers=MAX_POOL_WORKERS) as executor:
-    #     future_results = {executor.submit(voc_api.getEnvelope,
-    #     n): n for n in nullifiers}
-    # nullifiers_result = [x.result() for x in future_results]
-
     nullifiers_result = []
-    for n in tqdm(nullifiers):
-        nullifiers_result.append(voc_api.getEnvelope, n)
+    for e in tqdm(envelopes_filtered):
+        nullif = e.get("nullifier", None)
+        if nullif:
+            nullifiers_result.append(voc_api.getEnvelope(nullif))
 
     print("\nnullifiers_result")
     print(nullifiers_result[:10])

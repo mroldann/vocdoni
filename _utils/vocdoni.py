@@ -110,6 +110,6 @@ class VocdoniApi:
             return json.loads(r.content)
 
         except Exception as e:
-            return e
+            return str(e)
 
       
