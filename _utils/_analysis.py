@@ -9,6 +9,10 @@ class globalIndicadors:
     creationTime_ts = "creationTime_ts"
     blocks = "blocks"
     proccess_duration_d = "proccess_duration_d"
+    entityId = "entityId"
+    votes_count = "votes_count"
+    processId = "processId"
+    
 
     def __init__(self, df_processes, df_envelopes, AVG_BLOCK_TIME_SECS):
         self.df_processes = df_processes
@@ -53,6 +57,37 @@ class globalIndicadors:
         self.votes_weekday = self.votes_weekday_grouper["nullifier"].count()
         self.votes_hour = self.votes_hour_grouper["nullifier"].count()
 
+
+        # Aggs
+
+        self.votes_per_process = (self.df_envelopes.groupby("process_id")["nullifier"]
+                                .count()       
+                                .sort_values(ascending=False)
+            )
+
+        self.votes_per_entity = (self.df_processes.groupby(self.entityId)[self.votes_count]
+                                .sum()       
+                                .sort_values(ascending=False)
+            )
+        
+        self.processes_per_entity = (self.df_processes.groupby(self.entityId)[self.processId]
+                                .count()       
+                                .sort_values(ascending=False)
+            )
+    
+    def plot_processes_per_entity(self):
+        return self._plot_ranking(self.processes_per_entity, title="Process per Entity (log scale)")
+
+    def plot_votes_per_process(self):
+        return self._plot_ranking(self.votes_per_process, title="Votes per Processes (log scale)")
+    
+    def plot_votes_per_entity(self):
+        return self._plot_ranking(self.votes_per_entity, title="Votes per Entity (log scale)")
+
+    def _plot_ranking(self, s, title, orientation='h',log_x=True):
+        fig = px.bar(s, orientation=orientation, title=title, log_x=log_x)
+        return fig.show()
+
     
     def _add_votes_to_processes(self):
         df_tmp = (self.df_envelopes.groupby("process_id")["nullifier"]
@@ -79,28 +114,38 @@ class globalIndicadors:
         self.df_processes["endingTime_ts"] = (self.df_processes[self.creationTime_ts] + self.df_processes[self.proccess_duration_d].apply(lambda x: timedelta(days=x)))    
     
     def plot_votes_per_day(self):
-            fig = px.scatter(self.votes_per_day)
-            fig.update_layout(title_text="votes_per_day")
-            return fig
+            # fig = px.scatter(self.votes_per_day)
+            # fig.update_layout(title_text="votes_per_day (log scale)")
+            # fig.update_yaxes(type="log") 
+            # return fig
+            return self._plot_scatter_log(self.votes_per_day, "votes_per_day (log scale)")
 
     
     def plot_votes_per_day_hour(self):
-            fig = px.scatter(self.votes_per_day_hour)
-            fig.update_layout(title_text="votes_per_day_hour")
-            return fig
+            # fig = px.scatter(self.votes_per_day_hour)
+            # fig.update_layout(title_text="votes_per_day_hour (log scale)")
+            # fig.update_yaxes(type="log") 
+            # return fig
+            return self._plot_scatter_log(self.votes_per_day_hour, "votes_per_day_hour (log scale)")
+
     
         
     def plot_votes_weekday(self):
-            fig = px.scatter(self.votes_weekday)
-            fig.update_layout(title_text="votes_weekday")
-            return fig
+            # fig = px.scatter(self.votes_weekday)
+            # fig.update_layout(title_text="votes_weekday (log scale)")
+            # fig.update_yaxes(type="log") 
+            # return fig
+            return self._plot_scatter_log(self.votes_weekday, "votes_weekday (log scale)")
 
     def plot_votes_hour(self):
-            fig = px.scatter(self.votes_hour)
-            fig.update_layout(title_text="votes_hour")
-            return fig
+            return self._plot_scatter_log(self.votes_hour, "votes_hour (log scale)")
 
-    
+    def _plot_scatter_log(self, s, title):
+            fig = px.scatter(s)
+            fig.update_layout(title_text=title)
+            fig.update_yaxes(type="log") 
+            return fig
+        
 
     
     
