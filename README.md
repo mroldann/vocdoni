@@ -9,13 +9,14 @@ Data will be stored in MongoDB collections for further analysis.
 - *The default port for mongo is `27017` so make sure it is available.*
 
 # Steps
-1. Set Environment
+1) Clone repo
+2) Set Environment
   - Install conda env: ```conda env create -n vocdoni-env --file environment.yml```
   - Activate env: ```conda activate vocdoni-env```
-2. Execute: ```pyton main.py```
+3) Execute: ```pyton main.py```
 
-# Note
-Vocdoni API method `getEnvelopeList` and `getEnvelop` take a long time to respond (aprox. 5 hours each in sequence).
+### Note
+Vocdoni API methods `getEnvelopeList` and `getEnvelop` take a long time to respond (aprox. 5 hours each in sequence).
 Threads and different `listSize` have been tested but it resulted into getting many timeouts or no speed win.
 For this reason, the most complete set of responses I was able to get was **cached** in `/data`.
 
