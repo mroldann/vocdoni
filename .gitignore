@@ -1,6 +1,5 @@
 .vscode/
 __pycache__/
-*.txt
 data/envelopes.json
 .ipynb_checkpoints/
 .backup/
