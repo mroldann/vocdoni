@@ -21,7 +21,7 @@ Threads and different `listSize` have been tested but it resulted into getting m
 For this reason, the most complete set of responses I was able to get was **cached** in `/data`.
 
 In `_const.py` there are two constants  set to `True` by default `CACHE_ENVELOPES` and `CACHE_WEIGHTS`.
-For executing this methods just turn it to `False`.
+Force to execute this methods by turning them to `False`.
 
 ## Analysis
 Two HTML files are provided. Both contain the same findigs but one doesn't contain code instructions:
