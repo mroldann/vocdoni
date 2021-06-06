@@ -8,16 +8,16 @@
 1. Set Environment
   - Install conda env: `....`
   - Install python libraries: `...`
+  - Activate env: `...`
 
 2. Execute: `pyton main.py`
 
 # Note
-Vocdoni API method `getEnvelopeList` takes a long time to respond (avg. 25s per call).
-Threasds have been tested but it resulted into getting many timeouts.
+Vocdoni API method `getEnvelopeList` and `getEnvelop` take a long time to respond (aprox. 5 hours each in sequence).
+Threasds and different `listSize` have been tested but it resulted into getting many timeouts or no speed win.
 For this reason, the most complete set of responses I was able to get was **cached**.
-It took aprox 4 hours. 
 
-In `_const.py` there is a constant `CACHE_ENVELOPES` set to `True` by default.
+In `_const.py` there are two constants  set to `True` by default `CACHE_ENVELOPES` and `CACHE_WEIGHTS`.
 For executing this method just turn it to `False`.
 
 

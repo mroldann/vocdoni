@@ -4,3 +4,4 @@ __pycache__/
 data/envelopes.json
 .ipynb_checkpoints/
 .backup/
+iframe_figures/

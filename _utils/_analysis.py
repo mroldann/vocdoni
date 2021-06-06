@@ -12,6 +12,7 @@ class globalIndicadors:
     entityId = "entityId"
     votes_count = "votes_count"
     processId = "processId"
+    weight = "weight"
     
 
     def __init__(self, df_processes, df_envelopes, AVG_BLOCK_TIME_SECS):
@@ -27,6 +28,7 @@ class globalIndicadors:
         # Needed for grouper, then dropped.
         self.df_processes['not_dup'] = 1 - self.df_processes["entityId"].duplicated()
 
+        self.df_envelopes[self.weight] = self.df_envelopes[self.weight].astype(float)
         ### Estimate timestamp for every envelope
         self.df_envelopes["vote_ts"] = (self.df_envelopes["height"]  
                                 / self.AVG_BLOCK_TIME_SECS # seconds

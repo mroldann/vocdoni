@@ -8,6 +8,7 @@ if __name__ ==  '__main__':
     import json
     from tqdm import tqdm
     import pandas as pd
+    from datetime import timedelta
 
     drop_collections()
 
@@ -49,10 +50,6 @@ if __name__ ==  '__main__':
         print("\n- API call: getEnvelopeList")
         for p in tqdm(processes):
             envelopes_dict_list.append(voc_api.getEnvelopeList(p, MAX_ENVELOPES))
-
-    
-    print("\nenvelopes_dict_list")
-    print("- Total envelopes: ", len(envelopes_dict_list))
     
     envelopes_filtered = []
     for e in envelopes_dict_list:
@@ -64,37 +61,50 @@ if __name__ ==  '__main__':
                 new = {attr: _d[attr] for attr in ATTR.getEnvelopeList if attr in _d}
                 envelopes_filtered.append(new)
     
-   
-    nullifiers = []
-
-    print("envelopes_filtered: ", len(envelopes_filtered))
     print(envelopes_filtered[:3])
     
-    print("\nInserting into envelopes collection")
-    col_envelopes.insert_many(envelopes_filtered)
-
-
+    nullifiers = []
     for env in envelopes_filtered:
         nullifiers.append(env.get('nullifier', None))
 
-    print("\nnullifiers")
-    print(nullifiers[:10])
-    print(len(nullifiers))
-    with open('nullifiers.txt', 'w') as f:
-        for item in nullifiers:
-            f.write("%s\n" % item)
-
-    nullifiers_result = []
+    weights_response = []
     
-    with open('nullifiers_result.txt', 'w') as f:        
+    if CACHE_WEIGHTS:
+        from data.weights import weights as weights_response
+        print("\n- Weights imported.")
+    else:
+        print("\n- API call: getEnvelope")
         for n in tqdm(nullifiers[:10]):
             r = voc_api.getEnvelope(n)
-            nullifiers_result.append(r)
-            f.write("%s\n" % r)
+            weights_response.append(r)
 
-    print("\nnullifiers_result")
-    print(nullifiers_result[:10])
-    print(len(nullifiers_result))
+    print("\nweights_response")
+    print(weights_response[:10])
+    print(len(weights_response))
     
+    weights_dict = {}
 
-    
+    for w_r in weights_response:
+        if isinstance(w_r, dict):
+            env = w_r.get("response", None).get("envelope", None)
+            if env:
+                nullifier = env.get("meta", None).get("nullifier", None)
+                weight = env.get("weight", None)
+                if weight:
+                    weights_dict[nullifier] = weight
+
+    print(weights_dict)
+
+    print("\nAdding weight and timestamp to envelopes")
+    for env in envelopes_filtered:
+        nullifier = env.get("nullifier")
+        # Set to 0 if not found
+        env["weight"] = weights_dict.get(nullifier, 0)
+        env["vote_ts"] = timedelta(day=(float(env["height"])/ AVG_BLOCK_TIME_SECS # seconds
+                            / 60 # minutes
+                            / 24 # days
+                            ) + MIN_KNOWN_DATE
+
+    print(envelopes_filtered[:10])
+    print("\nInserting into envelopes collection")
+    col_envelopes.insert_many(envelopes_filtered)
