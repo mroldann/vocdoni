@@ -23,5 +23,12 @@ For this reason, the most complete set of responses I was able to get was **cach
 In `_const.py` there are two constants  set to `True` by default `CACHE_ENVELOPES` and `CACHE_WEIGHTS`.
 For executing this methods just turn it to `False`.
 
+## Analysis
+Two HTML files are provided. Both contain the same findigs but one doesn't contain code instructions:
+- `analysis.html`
+- `analysis-no_code.html`
+
+*In order to watch graphs, iframe_figures/ dir is needed in the root path.*
+
 
 
