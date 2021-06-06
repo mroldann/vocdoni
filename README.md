@@ -3,6 +3,7 @@
 # Requirements
 - conda
 - mongoDB
+  - The default port for mongo is `27017`
 
 # Steps
 1. Set Environment

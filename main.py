@@ -2,10 +2,7 @@ if __name__ ==  '__main__':
     from _const import *
     from _utils import vocdoni
     from _utils.voc_const import *
-    from _utils._mongo import (vocdoni_db,  
-    col_processes, col_envelopes, drop_collections)
-    from concurrent.futures import ProcessPoolExecutor
-    import json
+    from _utils._mongo import col_processes, col_envelopes, drop_collections
     from tqdm import tqdm
     import pandas as pd
     from datetime import timedelta
@@ -39,6 +36,11 @@ if __name__ ==  '__main__':
 
     print("\nInserting into processes collection")
     col_processes.insert_many(processes_dict_list)
+    
+    myresult = col_processes.find()
+    myresult = [x for x in myresult]
+    df_processes = pd.DataFrame(myresult)
+    MIN_KNOWN_DATE = pd.to_datetime(df_processes['creationTime']).min()
     
     print("\nGetting data from envelopes") # 25.79s/it before Pool
     
@@ -96,14 +98,18 @@ if __name__ ==  '__main__':
     print(weights_dict)
 
     print("\nAdding weight and timestamp to envelopes")
+    print("\nMIN_KNOWN_DATE: ", MIN_KNOWN_DATE)
+
     for env in envelopes_filtered:
+        print(env)
         nullifier = env.get("nullifier")
         # Set to 0 if not found
         env["weight"] = weights_dict.get(nullifier, 0)
-        env["vote_ts"] = timedelta(day=(float(env["height"])/ AVG_BLOCK_TIME_SECS # seconds
-                            / 60 # minutes
-                            / 24 # days
-                            ) + MIN_KNOWN_DATE
+        days = (env["height"]/ AVG_BLOCK_TIME_SECS # seconds
+                / 60 # minutes
+                / 24 # days
+                )
+        env["vote_ts"] = timedelta(days=days) + MIN_KNOWN_DATE
 
     print(envelopes_filtered[:10])
     print("\nInserting into envelopes collection")
