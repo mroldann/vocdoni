@@ -7,11 +7,9 @@
 
 # Steps
 1. Set Environment
-  - Install conda env: `....`
-  - Install python libraries: `...`
-  - Activate env: `...`
-
-2. Execute: `pyton main.py`
+  - Install conda env: ```conda env create -n vocdoni-env --file environment.yml```
+  - Activate env: ```conda activate vocdoni-env```
+2. Execute: ```pyton main.py```
 
 # Note
 Vocdoni API method `getEnvelopeList` and `getEnvelop` take a long time to respond (aprox. 5 hours each in sequence).

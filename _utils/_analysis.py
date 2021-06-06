@@ -116,41 +116,27 @@ class globalIndicadors:
         self.df_processes["endingTime_ts"] = (self.df_processes[self.creationTime_ts] + self.df_processes[self.proccess_duration_d].apply(lambda x: timedelta(days=x)))    
     
     def plot_votes_per_day(self):
-            # fig = px.scatter(self.votes_per_day)
-            # fig.update_layout(title_text="votes_per_day (log scale)")
-            # fig.update_yaxes(type="log") 
-            # return fig
-            return self._plot_scatter_log(self.votes_per_day, "votes_per_day (log scale)")
-
+            return self._plot_scatter_log(self.votes_per_day, "votes_per_day (log scale)", 'markers+lines')
     
     def plot_votes_per_day_hour(self):
-            # fig = px.scatter(self.votes_per_day_hour)
-            # fig.update_layout(title_text="votes_per_day_hour (log scale)")
-            # fig.update_yaxes(type="log") 
-            # return fig
-            return self._plot_scatter_log(self.votes_per_day_hour, "votes_per_day_hour (log scale)")
+            return self._plot_scatter_log(self.votes_per_day_hour, "votes_per_day_hour (log scale)", 'markers')
 
-    
-        
     def plot_votes_weekday(self):
-            # fig = px.scatter(self.votes_weekday)
-            # fig.update_layout(title_text="votes_weekday (log scale)")
-            # fig.update_yaxes(type="log") 
-            # return fig
-            return self._plot_scatter_log(self.votes_weekday, "votes_weekday (log scale)")
+            return self._plot_scatter_log(self.votes_weekday, "votes_weekday (log scale)", 'markers')
 
     def plot_votes_hour(self):
-            return self._plot_scatter_log(self.votes_hour, "votes_hour (log scale)")
+            return self._plot_scatter_log(self.votes_hour, "votes_hour (log scale)",'markers+lines')
 
-    def _plot_scatter_log(self, s, title):
-            fig = px.scatter(s)
+    def _plot_scatter_log(self, s, title, mode):
+            fig = go.Figure()
+            fig.add_trace(go.Bar(x=s.index, y=s.values,
+                        # mode=mode
+                        )
+            )
             fig.update_layout(title_text=title)
             fig.update_yaxes(type="log") 
             return fig
-        
-
-    
-    
+            
     def scatter_duration_votes(self):
         tmp_df = self.df_processes.loc[:, ["proccess_duration_d", "votes_count"]]
         return self._scatter_duration_votes(tmp_df, title="Process duration vs votes count")
@@ -202,8 +188,10 @@ class globalIndicadors:
                                 marker_color="rgba(0, 255, 255, .8)", 
                                 name=name,
                                 x=evol.index,
-                                mode='markers'
+                                mode='markers+lines'
                             )
                     )
         fig.update_layout(title_text=name)
+        
+
         return fig.show()

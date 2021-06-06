@@ -1,9 +1,9 @@
-name: vocdoni-env
 channels:
   - anaconda
   - conda-forge
   - defaults
 dependencies:
+  - pip
   - anyio=3.1.0=py38haa244fe_0
   - argon2-cffi=20.1.0=py38h294d835_2
   - async_generator=1.10=py_0

@@ -37,16 +37,15 @@ class VocdoniApi:
     
 
     
-    def getEnvelopeList(self, processId, max_env):
+    def getEnvelopeList(self, processId):
         output = []
-        range_from_env = range(0, max_env, 64)
-        # for f in tqdm(range_from_env):
-        #     r = self._getEnvelopeList(processId=processId, _from=f)
-        #     output.append(r)
-        #     if not isinstance(r, list) or  len(r) != 64:
-        #         # Got all envelopes from process or received error
-        #         break
-        r = self._getEnvelopeList(processId=processId, _from=0)
+        range_from_env = range(0, 2000000, 64)
+        for f in tqdm(range_from_env):
+            r = self._getEnvelopeList(processId=processId, _from=f)
+            output.append(r)
+            if not isinstance(r, list) or  len(r) != 64:
+                # Got all envelopes from process or received error
+                break
         return r
     
     def getEnvelope(self, nullifier):
@@ -65,24 +64,11 @@ class VocdoniApi:
         _r = self._api_call(
             _method=METHODS.getEnvelopeList,
             processId=processId,
-            _from=_from,
-            listSize=LIST_SIZE
-        )
-        
-        if isinstance(_r, dict):
-            r = _r.get("response", _r).get("envelopes", _r)
-            output = []
-            if isinstance(r, list):
-                # Keep only needed attributes
-                # If r is an error it won't be a list
-                for env in r:    
-                    output.append({attr: env[attr] for attr in ATTR.getEnvelopeList 
-                    if attr in env})
+            _from=_from
+            )
 
-            if output: 
-                return output
-        else:
-            return _r
+        return _r
+        
     
     def _api_call(self, _method, _id=None, 
     _from=None, 
