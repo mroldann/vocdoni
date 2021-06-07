@@ -86,8 +86,17 @@ class globalIndicadors:
     def plot_votes_per_entity(self):
         return self._plot_ranking(self.votes_per_entity, title="Votes per Entity (log scale)")
 
-    def _plot_ranking(self, s, title, orientation='h',log_x=True):
-        fig = px.bar(s, orientation=orientation, title=title, log_x=log_x)
+    def _plot_ranking(self, s, title):
+        fig = px.histogram(s, title=title, nbins=40)
+        return fig.show()
+
+    def _plot_cumulative(self, s, title):
+        total_n = s.sum()
+        cumsum_s = (s.sort_values()/total_n).cumsum()
+        fig = px.line(cumsum_s.values, title=title)
+        fig.update_layout(showlegend=False)
+        fig.update_yaxes(title="Aggregate %")
+        fig.update_xaxes(title="Index")
         return fig.show()
 
     
@@ -138,8 +147,9 @@ class globalIndicadors:
             return fig
             
     def scatter_duration_votes(self):
-        tmp_df = self.df_processes.loc[:, ["proccess_duration_d", "votes_count"]]
-        return self._scatter_duration_votes(tmp_df, title="Process duration vs votes count")
+        fig = px.scatter(self.df_processes, x="proccess_duration_d", y="votes_count")
+        fig.update_yaxes(type="log") 
+        return fig.show()
 
     def _scatter_duration_votes(self, df, title):
         fig = create_scatterplotmatrix(
@@ -149,7 +159,7 @@ class globalIndicadors:
                                 title=title
                                 )
         return fig.show()
-    
+
     def get_global_indicators(self):
         # Processes
         self.total_processes = len(self.df_processes["processId"].unique())

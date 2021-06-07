@@ -14320,10 +14320,10 @@ a.anchor-link {
 </li>
 </ul>
 <ul>
-<li><code>envelopes</code>: relate to votes for a voting process. Each row is one vote for one process. Votes can have different weight.<ul>
+<li><code>envelopes</code>: related to votes for a voting process. Each row is one vote for one process. Votes can have different weight.<ul>
 <li><code>height</code>:  block that contains the transaction of the vote</li>
 <li><code>nullifier</code>: unique identifier for the vote</li>
-<li><code>process_id</code>: unique identifier for the process within the vote ocurred</li>
+<li><code>process_id</code>: unique identifier for the process where the vote ocurred</li>
 <li><code>weight</code>: voting power for the vote</li>
 <li><code>vote_ts</code>: estimated timestamp when the vote ocurred based on <code>height</code> and first known timestamp based on <code>processes.creationTime</code></li>
 </ul>
@@ -14808,7 +14808,8 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Aggregations-per-Entity-and-Process">Aggregations per <code>Entity</code> and <code>Process</code><a class="anchor-link" href="#Aggregations-per-Entity-and-Process">&#182;</a></h3>
+<h3 id="Aggregations-per-Entity-and-Process">Aggregations per <code>Entity</code> and <code>Process</code><a class="anchor-link" href="#Aggregations-per-Entity-and-Process">&#182;</a></h3><p>We'll use <code>histograms</code> to show variables distribution and <code>cumulative charts</code> to complement them and not being affected by histogram's <code>n_bins</code> parameter.</p>
+
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
 
@@ -14837,6 +14838,47 @@ a.anchor-link {
 
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>We can see that there are few processes with more than 9k votes.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
+
+<div class="jp-Cell-outputWrapper">
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_16.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>We ordered votes by process in an ascending way and sum them in a cumulative form.
+From process 0 to 22, we only have 4% of votes.</p>
+<p>The three processes with most votes accounts for the 96% of the total.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
 
 <div class="jp-Cell-outputWrapper">
@@ -14881,7 +14923,7 @@ a.anchor-link {
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_17.html"
+    src="iframe_figures/figure_18.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -14894,6 +14936,162 @@ a.anchor-link {
 
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>We can see that there are few entities with more than 9k votes.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
+
+<div class="jp-Cell-outputWrapper">
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>votes_count</th>
+    </tr>
+    <tr>
+      <th>entityId</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>e50a97585b8a530677a0402e8df7e1424e3a31f7</th>
+      <td>9932.00</td>
+    </tr>
+    <tr>
+      <th>5cd2dd081bfab5b99363eee9dd712ba446e8218e</th>
+      <td>9825.00</td>
+    </tr>
+    <tr>
+      <th>f887ae647fedae2e5bd0e9ceaed69ed4e89b7935</th>
+      <td>9553.00</td>
+    </tr>
+    <tr>
+      <th>2811f8f44c7f4d8d7e50d795f962c1d98df1f7c4</th>
+      <td>500.00</td>
+    </tr>
+    <tr>
+      <th>e95226ab61be1eab06fa3dea5f556e6d4a8500b4</th>
+      <td>266.00</td>
+    </tr>
+    <tr>
+      <th>359e67ac4c5311cbd6571a20eaf6e879a466d154</th>
+      <td>200.00</td>
+    </tr>
+    <tr>
+      <th>9f3f676430c0cca8ea9646b81fba2b197b990ec4</th>
+      <td>128.00</td>
+    </tr>
+    <tr>
+      <th>8605d9f7e19e4568944640c7c95693d950f2daf3</th>
+      <td>50.00</td>
+    </tr>
+    <tr>
+      <th>8c8a5f4d994eba4b36a3cb0ab04a66a72d961483</th>
+      <td>20.00</td>
+    </tr>
+    <tr>
+      <th>ed1d79d82e84514d8aeb11f8fed8c207303efb01</th>
+      <td>20.00</td>
+    </tr>
+    <tr>
+      <th>af4c894863b45f3d450b31f96954da2fea672bfa</th>
+      <td>20.00</td>
+    </tr>
+    <tr>
+      <th>f0f8d83cdab2f9514bef0319f1b434267be36b5c</th>
+      <td>11.00</td>
+    </tr>
+    <tr>
+      <th>7551500f28ba9c27a76f96f42260429a835768b3</th>
+      <td>10.00</td>
+    </tr>
+    <tr>
+      <th>fb36170605f23ddd26b146ccd8d3f16f5c738535</th>
+      <td>4.00</td>
+    </tr>
+    <tr>
+      <th>5592ec0cfb4dbc12d3ab100b257153436a1f0fea</th>
+      <td>3.00</td>
+    </tr>
+    <tr>
+      <th>0072f8eb750b468ce11de996cae5080f88568339</th>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <th>e4172d4bff7a12dc02b69bf542f0f6aa5b62df68</th>
+      <td>1.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
+
+<div class="jp-Cell-outputWrapper">
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_20.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>We ordered votes by entity in an ascending way and sum them in a cumulative form.
+From process 0 to 57, we only have 4% of votes.</p>
+<p>The three entities with most votes accounts for the 96% of the total.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
 
 <div class="jp-Cell-outputWrapper">
@@ -14966,7 +15164,7 @@ Mean is affected by outliers (mean is 500 but median is 0).</p>
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_20.html"
+    src="iframe_figures/figure_23.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -14979,6 +15177,135 @@ Mean is affected by outliers (mean is 500 but median is 0).</p>
 
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>We can see that there is only one entity with more than 50 processes.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
+
+<div class="jp-Cell-outputWrapper">
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>processId</th>
+    </tr>
+    <tr>
+      <th>entityId</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>f0f8d83cdab2f9514bef0319f1b434267be36b5c</th>
+      <td>55</td>
+    </tr>
+    <tr>
+      <th>1f9840a85d5af5bf1d1762f925bdaddc4201f984</th>
+      <td>28</td>
+    </tr>
+    <tr>
+      <th>8605d9f7e19e4568944640c7c95693d950f2daf3</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>6e894660985207feb7cf89faf048998c71e8ee89</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>5592ec0cfb4dbc12d3ab100b257153436a1f0fea</th>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>233c1a93333fc9dd52785ff4e935868b4d2c6a36</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>a73c170e8c8cc3fe15146f0f8d66562f00c14ad2</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>8ab75644f8a9833ede4a84fb2079e996979aed2d</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2a910a299d9485a10a1c870aee96cee2391015ec</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>29dc4923fe62cbc28b94c2c075a6e68f040f7644</th>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
+
+<div class="jp-Cell-outputWrapper">
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_25.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>We ordered processes by entity in an ascending way and sum them in a cumulative form.
+We can see that the distribution is less imbalanced.
+From process 0 to 30, we have 18% of processes.</p>
+<p>The other half entities account for the 82% of the total.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
 
 <div class="jp-Cell-outputWrapper">
@@ -15405,15 +15732,39 @@ Name: processId, dtype: float64
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 <iframe
     scrolling="no"
-    width="920px"
-    height="720"
-    src="iframe_figures/figure_25.html"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_30.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
 
 </div>
 
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><em>(y-axis is in log scale)</em></p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
+
+<div class="jp-Cell-outputWrapper">
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Process duration stats:
+</pre>
+</div>
 </div>
 
 </div>
@@ -15429,7 +15780,7 @@ Name: processId, dtype: float64
 <div class="jp-OutputArea-child">
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Process duration stats:
+<pre>Skewness:  10.92
 </pre>
 </div>
 </div>
@@ -15469,7 +15820,8 @@ Name: proccess_duration_d, dtype: float64</pre>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Processes last 2.88 days on average, being 0.19 the mean. There one outlier of 141.56 that affects the distribution.</p>
+<p>Processes last 2.88 days on average, being 0.19 the median. There is one outlier of 141.56 that affects the distribution.</p>
+<p>This is a right-skewed distribution (The right tail is longer)</p>
 
 </div>
 </div>
@@ -15488,6 +15840,24 @@ Name: proccess_duration_d, dtype: float64</pre>
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>Vote count stats:
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
+
+<div class="jp-Cell-outputWrapper">
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Skewness:  7.34
 </pre>
 </div>
 </div>
@@ -15562,6 +15932,7 @@ Name: votes_count, dtype: int64</pre>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>The majority of processes hace zero votes. There are some outliers that affect the mean.</p>
+<p>This is a right-skewed distribution (The right tail is longer)</p>
 
 </div>
 </div>
@@ -15589,7 +15960,7 @@ Name: votes_count, dtype: int64</pre>
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_31.html"
+    src="iframe_figures/figure_36.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -15661,7 +16032,7 @@ Freq: D, Name: nullifier, dtype: int64</pre>
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_33.html"
+    src="iframe_figures/figure_38.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -15730,7 +16101,7 @@ Name: nullifier, dtype: int64</pre>
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_35.html"
+    src="iframe_figures/figure_40.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -15763,7 +16134,7 @@ Name: nullifier, dtype: int64</pre>
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_36.html"
+    src="iframe_figures/figure_41.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -16079,7 +16450,7 @@ Name: weight, dtype: float64</pre>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Processes with weight different than 1:</p>
+<p>Processes with at least one vote with weight different than 1:</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell  jp-mod-noInput ">
@@ -16294,6 +16665,10 @@ Name: weight, dtype: float64</pre>
 <p>We haven´t seen any other data pattern to consider as a risk or an alarm.</p>
 <h3 id="See-you-on-next-report!-&#128515;">See you on next report! &#128515;<a class="anchor-link" href="#See-you-on-next-report!-&#128515;">&#182;</a></h3>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs jp-mod-noInput ">
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs jp-mod-noInput ">
+
 </div>
 </body>
 

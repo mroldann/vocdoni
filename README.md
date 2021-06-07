@@ -10,10 +10,11 @@ Data will be stored in MongoDB collections for further analysis.
 
 # Steps
 1) Clone repo
-2) Set Environment
-  - Install conda env: ```conda env create -n vocdoni-env --file environment.yml```
-  - Activate env: ```conda activate vocdoni-env```
-3) Execute: ```pyton main.py```
+2) Change dir to repo dir
+3) Set Environment
+  - Install conda env using CLI: ```conda env create -n vocdoni-env --file environment.yml```
+  - Activate env using CLI: ```conda activate vocdoni-env```
+4) Execute using CLI: ```pyton main.py```
 
 ### Note
 Vocdoni API methods `getEnvelopeList` and `getEnvelop` take a long time to respond (aprox. 5 hours each in sequence).
