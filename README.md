@@ -27,7 +27,7 @@ Force to execute this methods by turning them to `False`.
 ## Analysis
 Two HTML files are provided. Both contain the same findigs but one doesn't contain code instructions:
 - `analysis.html`
-- `analysis-no_code.html`
+- `analysis (with code).html`
 
 *In order to watch graphs, iframe_figures/ dir is needed in the root path.*
 
